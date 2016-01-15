@@ -37,6 +37,7 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
     protected RecyclerView mListView;
     private SimpleItemRecyclerViewAdapter mListAdapter;
     SwipeRefreshLayout mSwipeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,8 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
                 android.R.color.holo_red_light);
         mSwipeLayout.setMode(SwipeRefreshLayout.Mode.PULL_FROM_END);
         mSwipeLayout.setLoadNoFull(true);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_progress,new DefaultProgressFragment()).commit();
     }
 
 
@@ -68,10 +71,10 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
     }
 
 
-
     @Override
     public void onRefresh() {
         //values.add(0, "Add " + values.size());
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -83,7 +86,10 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
 
     @Override
     public void onLoad() {
-      //  values.add("Add " + values.size());
+        for(int i=0;i<11;i++) {
+            DummyContent.DummyItem di = new DummyContent.DummyItem(String.valueOf(mListAdapter.getItemCount() + 1), "sldfjksdl", "sldfkjsldkf");
+            mListAdapter.add(di);
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -136,6 +142,9 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
                 }
             });
         }
+        public void add(DummyContent.DummyItem obj) {
+            mValues.add(obj);
+        }
 
         @Override
         public int getItemCount() {
@@ -154,6 +163,7 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
+
 
             @Override
             public String toString() {
