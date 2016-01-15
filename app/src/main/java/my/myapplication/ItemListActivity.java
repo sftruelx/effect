@@ -34,17 +34,16 @@ import java.util.List;
  * item details side-by-side using two vertical panes.
  */
 public class ItemListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, SwipeRefreshLayout.OnLoadListener {
-    protected ListView mListView;
-    private ArrayAdapter<String> mListAdapter;
+    protected RecyclerView mListView;
+    private SimpleItemRecyclerViewAdapter mListAdapter;
     SwipeRefreshLayout mSwipeLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_list);
 
-        mListView = (ListView) findViewById(R.id.list);
-        mListAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, values);
+        mListView = (RecyclerView) findViewById(R.id.list);
+        mListAdapter = new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS);
         mListView.setAdapter(mListAdapter);
 
 
@@ -69,19 +68,10 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
     }
 
 
-    ArrayList<String> values = new ArrayList<String>() {{
-        add("value 0");
-        add("value 1");
-        add("value 2");
-        add("value 3");
-        add("value 4");
-        add("value 5");
-        add("value 6");
-    }};
 
     @Override
     public void onRefresh() {
-        values.add(0, "Add " + values.size());
+        //values.add(0, "Add " + values.size());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -93,7 +83,7 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
 
     @Override
     public void onLoad() {
-        values.add("Add " + values.size());
+      //  values.add("Add " + values.size());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -102,4 +92,74 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
             }
         }, 1000);
     }
+
+    public class SimpleItemRecyclerViewAdapter
+            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+
+        private final List<DummyContent.DummyItem> mValues;
+
+        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+            mValues = items;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_list_content, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            holder.mItem = mValues.get(position);
+            holder.mIdView.setText(mValues.get(position).id);
+            holder.mContentView.setText(mValues.get(position).content);
+
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (false) {
+                        Bundle arguments = new Bundle();
+                        arguments.putString(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        ItemDetailFragment fragment = new ItemDetailFragment();
+                        fragment.setArguments(arguments);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.item_detail_container, fragment)
+                                .commit();
+                    } else {
+                        Context context = v.getContext();
+                        Intent intent = new Intent(context, ItemDetailActivity.class);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+
+                        context.startActivity(intent);
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mValues.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View mView;
+            public final TextView mIdView;
+            public final TextView mContentView;
+            public DummyContent.DummyItem mItem;
+
+            public ViewHolder(View view) {
+                super(view);
+                mView = view;
+                mIdView = (TextView) view.findViewById(R.id.id);
+                mContentView = (TextView) view.findViewById(R.id.content);
+            }
+
+            @Override
+            public String toString() {
+                return super.toString() + " '" + mContentView.getText() + "'";
+            }
+        }
+    }
+
 }
