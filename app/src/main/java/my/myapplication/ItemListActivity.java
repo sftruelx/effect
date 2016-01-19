@@ -3,27 +3,20 @@ package my.myapplication;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-
-import my.myapplication.dummy.DummyContent;
-
-import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.InjectView;
+import my.myapplication.dummy.DummyContent;
 
 /**
  * An activity representing a list of Items. This activity
@@ -42,7 +35,7 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_list);
-
+        Debug.startMethodTracing("haha");
         mListView = (RecyclerView) findViewById(R.id.list);
         mListAdapter = new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS);
         mListView.setAdapter(mListAdapter);
@@ -59,9 +52,14 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
         mSwipeLayout.setMode(SwipeRefreshLayout.Mode.PULL_FROM_END);
         mSwipeLayout.setLoadNoFull(true);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_progress,new DefaultProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_progress, new DefaultProgressFragment()).commit();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Debug.stopMethodTracing();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,7 +84,7 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
 
     @Override
     public void onLoad() {
-        for(int i=0;i<11;i++) {
+        for (int i = 0; i < 11; i++) {
             DummyContent.DummyItem di = new DummyContent.DummyItem(String.valueOf(mListAdapter.getItemCount() + 1), "sldfjksdl", "sldfkjsldkf");
             mListAdapter.add(di);
         }
@@ -103,6 +101,10 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final List<DummyContent.DummyItem> mValues;
+        @InjectView(R.id.id)
+        TextView id;
+        @InjectView(R.id.content)
+        TextView content;
 
         public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
             mValues = items;
@@ -142,6 +144,7 @@ public class ItemListActivity extends AppCompatActivity implements SwipeRefreshL
                 }
             });
         }
+
         public void add(DummyContent.DummyItem obj) {
             mValues.add(obj);
         }
