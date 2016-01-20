@@ -10,6 +10,13 @@ import java.util.Map;
  * Android template wizards.
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
+ *
+ *
+ *
+ *
+ http://mis.sf-express.com/MRS/tppriceqry/qryMrsAll.action?userId=admin&token=afasfasfajjgshjvhjsfsahfashfjksahfkjf
+ &sourceSystem=CCS&sourceZoneCode=755&destZoneCode=020&sourceCity=深圳&destCity=广州&empNo=121581&customerPhone=15986681340&Area=0&weight=1
+
  */
 public class DummyContent {
 
